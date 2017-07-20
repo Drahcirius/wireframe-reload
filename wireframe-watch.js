@@ -8,7 +8,7 @@ const watchPath = config.watchPath;
 console.log(watchPath);
 
 const wss = new WebSocketServer({ port }, () => {
-	console.log(`css watcher listening on port ${port}`);	
+	console.log(`watcher listening on port ${port}`);	
 });
 
 wss.on('connection', (request) => {
