@@ -8,7 +8,7 @@ if (_wireframeReloadConfig) {
 			console.log(`attempting to reload ${data.href}`);
 			const element = document.querySelector(`[href^="${data.href}"]`);
 			if (element) element.href = `${data.href}?t=${+new Date()}`;
-		} else if (data.type === 'page') {
+		} else if (data.type === 'html') {
 			if (location.href.includes(data.href)) {
 				console.log(`attempting to reload current page`);
 				location.reload();
