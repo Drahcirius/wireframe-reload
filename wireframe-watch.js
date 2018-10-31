@@ -15,30 +15,22 @@ wss.on('connection', (request) => {
 	console.log(`received connection`);
 });
 
-let cssDebounce;
-let htmlDebounce;
+const watchTypes = ["css", "html"];
+const debounce = {};
 
-fs.watch(watchPath, (event, filename) => {
-	
-	if (event === 'change' && filename.endsWith('.css') && !cssDebounce) {
-		cssDebounce = true;
-		console.log(`sending change on ${filename}`);
-		wss.broadcast(JSON.stringify({ 
-			type: 'css', 
-			href: path.join(watchPath, filename)
-		}));
-		setTimeout(() => cssDebounce = null, 200);
-	}
-});
-fs.watch('./', (event, filename) => {
-	if (event === 'change' && filename.endsWith('.html') && !htmlDebounce) {
-		htmlDebounce = true;
-		console.log(`sending change on ${filename}`);
-		wss.broadcast(JSON.stringify({ 
-			type: 'page',
-			href: filename
-		}));
-		setTimeout(() => htmlDebounce = null, 200);
-	}
-});
+function addWatch(extension, watchPath) {
+	fs.watch(watchPath, (event, filename) => {
+		if (event === 'change' && filename.endsWith(`.${extension}`) && debounce[extension]) {
+			debounce[extension] = true;
+			console.log(`sending change on ${filename}`);
+			wss.broadcast(JSON.stringify({ 
+				type: extension, 
+				href: path.join(watchPath, filename)
+			}));
+			setTimeout(() => debounce[extension] = false, 200);
+		}
+	});
+}
 
+addWatch("css", watchPath);
+addWatch("html", './');
